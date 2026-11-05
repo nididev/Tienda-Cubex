@@ -543,6 +543,7 @@ src="pedidos.html"
 
 </div>
 <script src="../js/config.js"></script>
+<script src="../js/iframes-auto.js"></script>
 <script>
 /* CONFIRMACIÓN DE ELIMINACIÓN PARA EL IFRAME */
 window.confirmarEliminacionResena = function () {
@@ -589,33 +590,6 @@ window.confirmarEliminacionResena = function () {
 <script src="../js/admin.js"></script>
 <script src="../js/admin-resumen.js"></script>
 <script src="../js/comentarios.js"></script>
-<script>
-/* Altura automática de los módulos (iframes) que envían "cubex-altura". */
-window.addEventListener('message', function (event) {
-    if (event.origin !== window.location.origin || !event.data || event.data.tipo !== 'cubex-altura') {
-        return;
-    }
-
-    document.querySelectorAll('iframe').forEach(function (iframe) {
-        if (iframe.contentWindow === event.source && Number.isFinite(Number(event.data.altura))) {
-            iframe.style.setProperty('height', Math.max(600, Number(event.data.altura) + 24) + 'px', 'important');
-            iframe.style.setProperty('min-height', '0', 'important');
-        }
-    });
-});
-
-window.addEventListener('message', function(event) {
-
-    if (event.data && event.data.tipo === 'altura-productos') {
-
-        const iframe = document.querySelector('#productos .iframe-productos');
-
-        if (iframe && Number.isFinite(Number(event.data.altura))) {
-            iframe.style.height = (Number(event.data.altura) + 20) + 'px';
-        }
-    }
-
-});
-</script>
+<!-- La altura de los módulos en iframe la ajusta js/iframes-auto.js -->
 </body>
 </html>

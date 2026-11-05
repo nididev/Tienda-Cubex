@@ -442,19 +442,9 @@
          aria-live="polite"></div>
 
     <script src="../js/config.js"></script>
+    <script src="../js/iframes-auto.js"></script>
     <script src="../js/empleado.js"></script>
-<script>
-/* Altura automática de los módulos en iframe */
-window.addEventListener("message", function (evento) {
-    if (evento.origin !== window.location.origin || !evento.data || evento.data.tipo !== "cubex-altura") return;
-
-    document.querySelectorAll("iframe").forEach(function (iframe) {
-        if (iframe.contentWindow === evento.source) {
-            iframe.style.height = Math.max(600, Number(evento.data.altura) + 24) + "px";
-        }
-    });
-});
-</script>
+<!-- La altura de los módulos en iframe la ajusta js/iframes-auto.js -->
     <script src="../js/comentarios.js"></script>
 
 </body>
