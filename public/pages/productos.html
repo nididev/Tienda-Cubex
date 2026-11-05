@@ -191,25 +191,93 @@
 
         /* Tabla */
 
+        /* La tabla se ajusta al ancho disponible: los textos largos
+           (como la descripción) bajan de renglón en lugar de crear
+           desplazamiento horizontal. */
         .tabla-contenedor {
             width: 100%;
-            overflow-x: auto;
+            overflow-x: visible;
             border: 1px solid #2c3b50;
             border-radius: 9px;
         }
 
         .tabla-contenedor table {
             width: 100%;
-            min-width: 950px;
+            min-width: 0;
             border-collapse: collapse;
+            table-layout: auto;
         }
 
         .tabla-contenedor th,
         .tabla-contenedor td {
-            padding: 13px 12px;
+            padding: 11px 9px;
             text-align: left;
+            vertical-align: middle;
             border-bottom: 1px solid #2c3b50;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .tabla-contenedor th {
             white-space: nowrap;
+        }
+
+        .tabla-contenedor td.celda-foto img {
+            width: 56px !important;
+            height: 56px !important;
+        }
+
+        .tabla-contenedor td.celda-nombre {
+            min-width: 130px;
+            font-weight: 600;
+        }
+
+        .tabla-contenedor .detalle-stock {
+            display: block;
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #8fa1b8;
+        }
+
+        .tabla-contenedor .detalle-stock.agotado {
+            color: #ff5a6e;
+            font-weight: 600;
+        }
+
+        .tabla-contenedor td.celda-descripcion {
+            min-width: 170px;
+            line-height: 1.45;
+        }
+
+        .tabla-contenedor td.celda-numero,
+        .tabla-contenedor td.celda-corta {
+            white-space: nowrap;
+        }
+
+        .tabla-contenedor .acciones-producto {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 105px;
+        }
+
+        .tabla-contenedor .acciones-producto button {
+            width: 100%;
+            margin: 0;
+            padding: 8px 10px;
+            white-space: nowrap;
+        }
+
+        /* En pantallas angostas sí se permite desplazar la tabla. */
+        @media (max-width: 900px) {
+            .tabla-contenedor {
+                overflow-x: auto;
+            }
+
+            .tabla-contenedor table {
+                min-width: 820px;
+            }
         }
 
         .tabla-contenedor th {

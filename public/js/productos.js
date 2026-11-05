@@ -56,6 +56,7 @@ async function cargarProductos() {
 
             // Fotografía
             const celdaImagen = document.createElement('td');
+            celdaImagen.className = 'celda-foto';
 
             if (producto.imagen) {
                 const imagen = document.createElement('img');
@@ -86,24 +87,49 @@ async function cargarProductos() {
             const inactivo = Number(producto.activo) === 0;
             const existencias = Number(producto.stock_actual ?? 0);
 
+            // Nombre con el stock en un segundo renglón
+            const celdaNombre = document.createElement('td');
+            celdaNombre.className = 'celda-nombre';
+            celdaNombre.textContent = `${producto.nombre}${inactivo ? ' (dado de baja)' : ''}`;
+
+            const detalleStock = document.createElement('span');
+            detalleStock.className = 'detalle-stock';
+            detalleStock.textContent = `Stock: ${existencias}`;
+
+            if (!inactivo && existencias <= 0) {
+                detalleStock.textContent += ' · AGOTADO';
+                detalleStock.classList.add('agotado');
+            }
+
+            celdaNombre.appendChild(detalleStock);
+
             const valores = [
-                producto.id,
-                `${producto.nombre}${inactivo ? ' (dado de baja)' : ''} · stock: ${existencias}${!inactivo && existencias <= 0 ? ' · AGOTADO' : ''}`,
-                producto.descripcion || '--',
-                producto.lote || '--',
-                producto.serie || '--',
-                producto.caducidad
-                    ? String(producto.caducidad).slice(0, 10)
-                    : 'No aplica',
-                producto.id_proveedor ?? 'Sin proveedor',
-                producto.costo,
-                producto.precio
+                { valor: producto.id, clase: 'celda-corta' },
+                { celda: celdaNombre },
+                { valor: producto.descripcion || '--', clase: 'celda-descripcion' },
+                { valor: producto.lote || '--' },
+                { valor: producto.serie || '--' },
+                {
+                    valor: producto.caducidad
+                        ? String(producto.caducidad).slice(0, 10)
+                        : 'No aplica',
+                    clase: 'celda-corta'
+                },
+                { valor: producto.id_proveedor ?? 'Sin proveedor' },
+                { valor: producto.costo, clase: 'celda-numero' },
+                { valor: producto.precio, clase: 'celda-numero' }
             ];
 
-            valores.forEach(valor => {
-                const celda = document.createElement('td');
-                celda.textContent = valor ?? '--';
-                fila.appendChild(celda);
+            valores.forEach(({ valor, clase, celda }) => {
+                if (celda) {
+                    fila.appendChild(celda);
+                    return;
+                }
+
+                const nueva = document.createElement('td');
+                if (clase) nueva.className = clase;
+                nueva.textContent = valor ?? '--';
+                fila.appendChild(nueva);
             });
 
             // Acciones
@@ -128,8 +154,11 @@ async function cargarProductos() {
                 fila.style.opacity = '0.6';
             }
 
-            celdaAcciones.appendChild(btnEditar);
-            celdaAcciones.appendChild(btnEliminar);
+            const grupoAcciones = document.createElement('div');
+            grupoAcciones.className = 'acciones-producto';
+            grupoAcciones.appendChild(btnEditar);
+            grupoAcciones.appendChild(btnEliminar);
+            celdaAcciones.appendChild(grupoAcciones);
             fila.appendChild(celdaAcciones);
 
             tabla.appendChild(fila);
