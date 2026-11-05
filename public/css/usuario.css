@@ -50,6 +50,9 @@ input {
     background: var(--fondo-oscuro);
     border-right: 1px solid var(--borde);
     z-index: 100;
+    /* Si el menú no cabe en la pantalla, se desplaza */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .marca {
