@@ -11,6 +11,7 @@
      JWT_SECRET         = (opcional; si falta se genera uno al iniciar)
      CUBEX_SERVICE_KEY  = (opcional; si falta se genera una al iniciar)
      GMAIL_USER / GMAIL_APP_PASSWORD, SMTP_*       (opcionales, correos)
+     BREVO_API_KEY / MAIL_FROM                     (ticket por correo; Railway bloquea SMTP)
    ===================================================================== */
 
 const { spawn } = require('child_process');

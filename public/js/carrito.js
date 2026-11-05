@@ -612,8 +612,6 @@ function actualizarCarrito() {
                 avisoStock = `<p class="carrito-item-aviso agotado">Agotado: elimínalo para continuar.</p>`;
             } else if (cantidad > Number(producto.stock)) {
                 avisoStock = `<p class="carrito-item-aviso agotado">Solo quedan ${Number(producto.stock)}. Reduce la cantidad.</p>`;
-            } else if (Number(producto.stock) <= 5) {
-                avisoStock = `<p class="carrito-item-aviso">Quedan ${Number(producto.stock)} disponibles.</p>`;
             }
         }
 

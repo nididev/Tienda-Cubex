@@ -674,3 +674,22 @@ body {
     color: #111;
     transform: translateY(-2px);
 }
+/* Estado del envío del ticket por correo */
+.resultado-pago .estado-correo {
+    min-height: 20px;
+    margin: 4px 0 18px;
+    font-size: 14px;
+    color: #b8c2d0;
+}
+
+.resultado-pago .estado-correo:empty {
+    display: none;
+}
+
+.resultado-pago .estado-correo.exito {
+    color: #34d399;
+}
+
+.resultado-pago .estado-correo.error {
+    color: #fbbf24;
+}

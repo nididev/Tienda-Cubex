@@ -448,6 +448,44 @@ function mostrarPagoExitoso(idPedido) {
     folioPedido.textContent = `Pedido #${idPedido}`;
 
     btnPagar.disabled = true;
+
+    // El ticket se envía solo al correo registrado del cliente.
+    enviarTicketPorCorreo(idPedido);
+}
+
+/* =========================================================
+   ENVIAR TICKET POR CORREO
+   ========================================================= */
+
+async function enviarTicketPorCorreo(idPedido) {
+    const estado = document.getElementById("estadoCorreoTicket");
+    if (!estado) return;
+
+    estado.className = "estado-correo";
+    estado.textContent = "Enviando tu ticket por correo...";
+
+    try {
+        const respuesta = await fetch(
+            `${API_TICKETS}/api/tickets/${idPedido}/enviar`,
+            {
+                method: "POST",
+                headers: obtenerHeaders()
+            }
+        );
+
+        const datos = await respuesta.json().catch(() => ({}));
+
+        if (!respuesta.ok) {
+            throw new Error(datos.detail || "No fue posible enviar el ticket por correo.");
+        }
+
+        estado.className = "estado-correo exito";
+        estado.textContent = `Te enviamos el ticket a ${datos.correo}.`;
+
+    } catch (error) {
+        estado.className = "estado-correo error";
+        estado.textContent = `${error.message} Puedes descargarlo con el botón.`;
+    }
 }
 
 /* =========================================================

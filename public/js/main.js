@@ -238,11 +238,8 @@ function obtenerExistenciasHTML(producto) {
         return '<p class="producto-existencias agotado">No disponible por el momento</p>';
     }
 
-    if (stock <= 5) {
-        return `<p class="producto-existencias pocas">¡Últimas ${stock} unidad(es)!</p>`;
-    }
-
-    return `<p class="producto-existencias">${stock} disponibles</p>`;
+    // La cantidad en existencia solo se muestra en el panel de administración.
+    return '';
 }
 
 // ========================================
