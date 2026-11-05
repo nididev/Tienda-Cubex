@@ -1,0 +1,382 @@
+/* =========================================
+   CUBEX - LOGÍSTICA Y POSTVENTA
+========================================= */
+
+:root {
+    --log-cyan: #00bcd4;
+    --log-dark: #17212b;
+    --log-muted: #687482;
+    --log-border: #e5e9ef;
+    --log-red: #b42318;
+    --log-green: #167647;
+}
+
+/* GENERAL */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: inherit;
+}
+
+.log-wrap {
+    padding: 24px;
+    color: #202a35;
+    min-height: 100vh;
+    background: #f7f9fc;
+}
+
+/* ENCABEZADO */
+
+.log-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.log-kicker {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    color: #00a6bd;
+    margin: 0 0 7px;
+}
+
+.log-head h1 {
+    font-size: 27px;
+    margin: 0 0 7px;
+    color: #17212b;
+}
+
+.log-sub {
+    margin: 0;
+    color: var(--log-muted);
+    font-size: 14px;
+}
+
+/* ESTADÍSTICAS */
+
+.log-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+}
+
+.log-stat {
+    background: #fff;
+    border: 1px solid var(--log-border);
+    border-radius: 12px;
+    padding: 17px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    box-shadow: 0 3px 12px #17212b08;
+}
+
+.log-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #e4f9fc;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.log-stat strong {
+    display: block;
+    font-size: 24px;
+    color: #17212b;
+}
+
+.log-stat small {
+    color: var(--log-muted);
+    font-size: 12px;
+}
+
+/* PANELES */
+
+.log-panel {
+    background: #fff;
+    border: 1px solid var(--log-border);
+    border-radius: 12px;
+    padding: 21px;
+    margin: 18px 0;
+    box-shadow: 0 3px 12px #17212b08;
+}
+
+.log-panel h2,
+.log-panel h3 {
+    margin: 0 0 16px;
+    color: #17212b;
+    font-size: 19px;
+}
+
+/* FORMULARIOS */
+
+.log-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.log-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.log-field.full {
+    grid-column: 1 / -1;
+}
+
+.log-field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #344150;
+}
+
+.log-field input,
+.log-field select,
+.log-field textarea,
+.log-toolbar input,
+.log-toolbar select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d7dee7;
+    border-radius: 8px;
+    background: #fff;
+    color: #202a35;
+    font: inherit;
+    font-size: 14px;
+    min-width: 0;
+}
+
+.log-field textarea {
+    resize: vertical;
+    min-height: 85px;
+}
+
+.log-field input:focus,
+.log-field select:focus,
+.log-field textarea:focus,
+.log-toolbar input:focus,
+.log-toolbar select:focus {
+    outline: 0;
+    border-color: var(--log-cyan);
+    box-shadow: 0 0 0 3px #00bcd41c;
+}
+
+/* BOTONES */
+
+.log-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.log-btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    transition: .2s;
+}
+
+.log-btn:hover {
+    filter: brightness(.96);
+    transform: translateY(-1px);
+}
+
+.log-btn.primary {
+    background: #00bcd4;
+    color: #062d34;
+}
+
+.log-btn.secondary {
+    background: #edf1f5;
+    color: #344150;
+}
+
+.log-btn.danger {
+    background: #fee4e2;
+    color: #a51d16;
+}
+
+/* TABLAS */
+
+.log-toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.log-toolbar input {
+    max-width: 320px;
+}
+
+.log-toolbar select {
+    max-width: 220px;
+}
+
+.log-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+    font-size: 13px;
+}
+
+.log-table th,
+.log-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #edf0f4;
+    vertical-align: middle;
+}
+
+.log-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #667382;
+    background: #f8fafc;
+    white-space: nowrap;
+}
+
+.log-table td {
+    color: #344150;
+}
+
+.log-table tr:hover td {
+    background: #fbfdff;
+}
+
+.log-table .log-btn {
+    padding: 7px 9px;
+    margin: 2px;
+}
+
+.log-empty {
+    text-align: center !important;
+    color: #7b8794 !important;
+    padding: 28px !important;
+}
+
+/* ESTADOS */
+
+.log-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    background: #edf1f5;
+    color: #465260;
+    white-space: nowrap;
+}
+
+.log-badge.pending {
+    background: #fff3cd;
+    color: #805b00;
+}
+
+.log-badge.progress {
+    background: #dceeff;
+    color: #145a91;
+}
+
+.log-badge.good {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.log-badge.bad {
+    background: #fee2e2;
+    color: #a51d16;
+}
+
+/* MENSAJES */
+
+.log-note {
+    color: #74808d;
+    font-size: 12px;
+    margin: 13px 0 0;
+}
+
+.log-message {
+    font-size: 13px;
+    margin: 12px 0 0;
+    color: var(--log-green);
+    min-height: 18px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+    .log-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .log-wrap {
+        padding: 15px;
+    }
+
+    .log-head {
+        display: block;
+    }
+
+    .log-head h1 {
+        font-size: 23px;
+    }
+
+    .log-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .log-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .log-field.full {
+        grid-column: auto;
+    }
+
+    .log-panel {
+        padding: 15px;
+    }
+
+    .log-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .log-toolbar input,
+    .log-toolbar select {
+        max-width: none;
+    }
+
+}

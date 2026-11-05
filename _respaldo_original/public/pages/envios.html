@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBEX | Envíos y rastreo</title>
+    <link rel="stylesheet" href="../css/logistica.css">
+</head>
+
+<body data-module="envios">
+
+<main class="log-wrap">
+
+    <header class="log-head">
+        <div>
+            <p class="log-kicker">LOGÍSTICA CUBEX</p>
+            <h1>Envíos y rastreo</h1>
+            <p class="log-sub">Registra y administra el seguimiento de los pedidos.</p>
+        </div>
+    </header>
+
+    <section class="log-stats">
+
+        <div class="log-stat">
+            <span class="log-stat-icon">📦</span>
+            <div>
+                <strong id="statTotal">0</strong>
+                <small>Envíos registrados</small>
+            </div>
+        </div>
+
+        <div class="log-stat">
+            <span class="log-stat-icon">🚚</span>
+            <div>
+                <strong id="statTransit">0</strong>
+                <small>En tránsito / reparto</small>
+            </div>
+        </div>
+
+        <div class="log-stat">
+            <span class="log-stat-icon">⏳</span>
+            <div>
+                <strong id="statPending">0</strong>
+                <small>Pendientes</small>
+            </div>
+        </div>
+
+        <div class="log-stat">
+            <span class="log-stat-icon">✓</span>
+            <div>
+                <strong id="statDelivered">0</strong>
+                <small>Entregados</small>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="log-panel">
+
+        <h2>Registrar nuevo envío</h2>
+
+        <form id="formEnvio" class="log-grid">
+
+            <input type="hidden" id="envioId" name="id">
+
+            <div class="log-field">
+                <label for="envio_pedido">Número de pedido *</label>
+                <input
+                    type="text"
+                    id="envio_pedido"
+                    name="pedido"
+                    placeholder="Ej. CUB-0001"
+                    required>
+            </div>
+
+            <div class="log-field">
+                <label for="envio_paqueteria">Paquetería *</label>
+                <select id="envio_paqueteria" name="paqueteria" required>
+                    <option value="">Selecciona una paquetería</option>
+                    <option value="Estafeta">Estafeta</option>
+                    <option value="DHL">DHL</option>
+                    <option value="FedEx">FedEx</option>
+                    <option value="Paquetexpress">Paquetexpress</option>
+                    <option value="Correos de México">Correos de México</option>
+                    <option value="Otra">Otra</option>
+                </select>
+            </div>
+
+            <div class="log-field">
+                <label for="envio_guia">Número de guía *</label>
+                <input
+                    type="text"
+                    id="envio_guia"
+                    name="guia"
+                    placeholder="Número de seguimiento"
+                    required>
+            </div>
+
+            <div class="log-field">
+                <label for="envio_fecha">Fecha de envío *</label>
+                <input
+                    type="date"
+                    id="envio_fecha"
+                    name="fecha"
+                    required>
+            </div>
+
+            <div class="log-field">
+                <label for="envio_estimado">Entrega estimada</label>
+                <input
+                    type="date"
+                    id="envio_estimado"
+                    name="estimado">
+            </div>
+
+            <div class="log-field">
+                <label for="envio_estado">Estado *</label>
+                <select id="envio_estado" name="estado" required>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En tránsito">En tránsito</option>
+                    <option value="En reparto">En reparto</option>
+                    <option value="Entregado">Entregado</option>
+                    <option value="Incidencia">Incidencia</option>
+                </select>
+            </div>
+
+            <div class="log-field full">
+                <label for="envio_observaciones">Observaciones</label>
+                <textarea
+                    id="envio_observaciones"
+                    name="observaciones"
+                    placeholder="Información adicional del envío"></textarea>
+            </div>
+
+            <div class="log-actions full">
+                <button type="reset" class="log-btn secondary">
+                    Limpiar
+                </button>
+
+                <button
+                    type="submit"
+                    id="btnGuardarEnvio"
+                    class="log-btn primary">
+                    Registrar envío
+                </button>
+            </div>
+
+        </form>
+
+        <p id="msg" class="log-message"></p>
+
+    </section>
+
+    <section class="log-panel">
+
+        <div class="log-toolbar">
+            <div>
+                <h2>Seguimiento de envíos</h2>
+                <p class="log-sub">Consulta y administra los envíos registrados.</p>
+            </div>
+
+            <input
+                type="search"
+                id="buscar"
+                placeholder="Buscar pedido o guía...">
+
+            <select id="filtro">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En tránsito">En tránsito</option>
+                <option value="En reparto">En reparto</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Incidencia">Incidencia</option>
+            </select>
+        </div>
+
+        <div class="log-table-wrap">
+
+            <table class="log-table">
+
+                <thead>
+                    <tr>
+                        <th>Pedido</th>
+                        <th>Paquetería</th>
+                        <th>Guía</th>
+                        <th>Fecha envío</th>
+                        <th>Entrega estimada</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyEnvios"></tbody>
+
+            </table>
+
+        </div>
+
+        <p class="log-note">
+            El seguimiento se actualiza manualmente. No consulta automáticamente
+            las páginas de las paqueterías.
+        </p>
+
+    </section>
+
+</main>
+
+<script src="../js/logistica.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario | CUBEX</title>
+    <link rel="stylesheet" href="../css/inventario.css">
+</head>
+<body>
+
+    <main class="inventario-container">
+
+        <header class="encabezado">
+            <div>
+                <span class="subtitulo">CONTROL DE EXISTENCIAS</span>
+                <h1>Inventario</h1>
+                <p>Consulta y administra los niveles de stock de tus productos.</p>
+            </div>
+            <button id="btnActualizar" class="btn-actualizar">
+                ↻ Actualizar
+            </button>
+        </header>
+
+        <section class="resumen">
+            <article class="tarjeta">
+                <span>Total de productos</span>
+                <strong id="totalProductos">0</strong>
+            </article>
+
+            <article class="tarjeta">
+                <span>Stock bajo</span>
+                <strong id="totalBajo">0</strong>
+            </article>
+
+            <article class="tarjeta">
+                <span>Stock normal</span>
+                <strong id="totalNormal">0</strong>
+            </article>
+
+            <article class="tarjeta">
+                <span>Stock excedido</span>
+                <strong id="totalExceso">0</strong>
+            </article>
+        </section>
+
+        <section class="panel-inventario">
+            <div class="panel-titulo">
+                <div>
+                    <h2>Control de stock mínimo y máximo</h2>
+                    <p>Los productos se obtendrán del inventario registrado en CUBEX.</p>
+                </div>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Existencias</th>
+                            <th>Stock mínimo</th>
+                            <th>Stock máximo</th>
+                            <th>Estado</th>
+                            <th>Oferta sugerida</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaInventario">
+                        <tr>
+                            <td colspan="7" class="mensaje-tabla">
+                                Cargando productos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <p id="mensajeInventario" class="mensaje"></p>
+
+    </main>
+
+    <!-- Modal para modificar límites -->
+    <div id="modalStock" class="modal">
+        <div class="modal-contenido">
+
+            <h2>Configurar límites de stock</h2>
+            <p id="nombreProducto"></p>
+
+            <form id="formStock">
+
+                <input type="hidden" id="idProducto">
+
+                <label for="stockMinimo">Stock mínimo</label>
+                <input type="number" id="stockMinimo" min="0" required>
+
+                <label for="stockMaximo">Stock máximo</label>
+                <input type="number" id="stockMaximo" min="0" required>
+
+                <div class="modal-acciones">
+                    <button type="button" id="btnCancelar" class="btn-cancelar">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-guardar">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/inventario.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBEX | Validación de entregas</title>
+    <link rel="stylesheet" href="../css/logistica.css">
+</head>
+
+<body data-module="entregas">
+
+<main class="log-wrap">
+
+    <header class="log-head">
+        <div>
+            <p class="log-kicker">LOGÍSTICA CUBEX</p>
+            <h1>Validación de entregas</h1>
+            <p class="log-sub">
+                Confirma la recepción de los pedidos entregados.
+            </p>
+        </div>
+    </header>
+
+    <section class="log-stats">
+
+        <div class="log-stat">
+            <span class="log-stat-icon">📦</span>
+            <div>
+                <strong id="statDelivered">0</strong>
+                <small>Pedidos entregados</small>
+            </div>
+        </div>
+
+        <div class="log-stat">
+            <span class="log-stat-icon">✓</span>
+            <div>
+                <strong id="statValidated">0</strong>
+                <small>Entregas validadas</small>
+            </div>
+        </div>
+
+        <div class="log-stat">
+            <span class="log-stat-icon">⏳</span>
+            <div>
+                <strong id="statToValidate">0</strong>
+                <small>Por validar</small>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="log-panel">
+
+        <h2>Historial de entregas</h2>
+
+        <div class="log-table-wrap">
+
+            <table class="log-table">
+
+                <thead>
+                    <tr>
+                        <th>Pedido</th>
+                        <th>Paquetería</th>
+                        <th>Guía</th>
+                        <th>Fecha entrega</th>
+                        <th>Recibió</th>
+                        <th>Observaciones</th>
+                        <th>Validación</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyEntregas"></tbody>
+
+            </table>
+
+        </div>
+
+        <p class="log-note">
+            Los pedidos aparecen aquí cuando su estado se cambia a Entregado
+            desde el módulo de envíos.
+        </p>
+
+    </section>
+
+</main>
+
+<script src="../js/logistica.js"></script>
+
+</body>
+</html>

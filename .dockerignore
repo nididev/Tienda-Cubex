@@ -1,0 +1,21 @@
+# No se suben al contenedor: dependencias locales, credenciales y extras
+**/node_modules
+**/venv
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.env
+**/.ENV
+.git
+**/.git-respaldo
+_respaldo_original
+pruebas
+*.sqlite
+*.zip
+RegistroPedidosService-main
+StockMinimo
+StockOfertasApi
+soa-agregar-producto
+servicio-envio-comprobantes
+soa-servicio-reset-password-main/frontend
+servicio-reporte-compras/servicio-reporte-compras

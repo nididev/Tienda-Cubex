@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi perfil | CUBEX</title>
+    <link rel="stylesheet" href="../css/login.css">
+
+    <style>
+        /* CONTENEDOR PRINCIPAL */
+        .tarjeta-perfil {
+            width: 100%;
+            max-width: 1050px;
+            box-sizing: border-box;
+        }
+
+        /* DISTRIBUCIÓN DE PERFIL Y COMPRAS */
+        .perfil-compras {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 25px;
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        /* PANELES */
+        .panel-perfil,
+        .panel-compras {
+            background: #1E1E1E;
+            border: 1px solid #383838;
+            border-radius: 14px;
+            padding: 22px;
+            min-width: 0;
+        }
+
+        .panel-perfil h2,
+        .panel-compras h2 {
+            color: #E6B800;
+            font-size: 20px;
+            margin: 0 0 20px;
+        }
+
+        /* INFORMACIÓN DEL CLIENTE */
+        .panel-perfil .campo {
+            margin-bottom: 18px;
+        }
+
+        .panel-perfil .campo label {
+            display: block;
+            color: #aaa;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .panel-perfil .campo p {
+            color: #fff;
+            font-size: 15px;
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        /* LISTA DE COMPRAS */
+        .compra-item {
+            background: #292929;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .compra-item h3 {
+            color: #E6B800;
+            font-size: 16px;
+            margin: 0 0 12px;
+        }
+
+        .compra-item p {
+            color: #eee;
+            font-size: 13px;
+            margin: 8px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .estado-compra {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #383838;
+            color: #E6B800;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .sin-compras {
+            color: #aaa;
+            padding: 25px 10px;
+            text-align: center;
+            background: #292929;
+            border-radius: 10px;
+        }
+
+        /* MENSAJE */
+        #mensaje {
+            margin-top: 15px;
+            color: #E6B800;
+            font-size: 13px;
+        }
+
+        /* BOTÓN */
+        .volver {
+            display: inline-block;
+            margin-top: 25px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 750px) {
+            .perfil-compras {
+                grid-template-columns: 1fr;
+            }
+
+            .tarjeta-perfil {
+                padding: 20px;
+            }
+        }
+
+        /* NAVEGACIÓN ENTRE COMPRAS */
+
+.navegacion-compras {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-pedido {
+    background: #E6B800;
+    color: #111;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-pedido:hover:not(:disabled) {
+    background: #FFD426;
+    transform: translateY(-2px);
+}
+
+.btn-pedido:disabled {
+    background: #444;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.contador-pedidos {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+@media (max-width: 450px) {
+    .navegacion-compras {
+        flex-wrap: wrap;
+    }
+
+    .btn-pedido {
+        padding: 9px 10px;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+    <main class="contenedor">
+
+        <a href="index.html" class="logo">CUBEX</a>
+
+        <p class="eslogan">El reto está en tus manos</p>
+
+        <section class="tarjeta tarjeta-perfil">
+
+            <h1>Mi perfil</h1>
+
+            <p class="descripcion">
+                Consulta tu información y el historial de tus compras.
+            </p>
+
+            <div class="perfil-compras">
+
+                <!-- INFORMACIÓN DEL CLIENTE -->
+                <div class="panel-perfil">
+
+                    <h2>Información del cliente</h2>
+
+                    <div class="campo">
+                        <label>Nombre de usuario</label>
+                        <p id="nombreUsuario">Cargando...</p>
+                    </div>
+
+                    <div class="campo">
+                        <label>Nombre completo</label>
+                        <p id="nombreCompleto">Cargando...</p>
+                    </div>
+
+                    <div class="campo">
+                        <label>Correo electrónico</label>
+                        <p id="email">Cargando...</p>
+                    </div>
+
+                    <div class="campo">
+                        <label>Tipo de cuenta</label>
+                        <p id="rol">Cargando...</p>
+                    </div>
+
+                </div>
+
+                <!-- HISTORIAL DE COMPRAS -->
+                <div class="panel-compras">
+
+                    <h2>Mis compras</h2>
+
+                    <p class="descripcion">
+                        Consulta los pedidos que has realizado.
+                    </p>
+
+                    <div id="listaCompras">
+
+                        <p class="sin-compras">
+                            Cargando tus compras...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <p id="mensaje" role="status" aria-live="polite"></p>
+
+            <a href="index.html" class="volver">
+                ← Volver a la tienda
+            </a>
+
+        </section>
+
+    </main>
+
+    <script src="../js/perfil.js"></script>
+
+</body>
+</html>
