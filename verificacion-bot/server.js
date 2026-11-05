@@ -1,4 +1,3 @@
-
 const express = require('express');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
@@ -46,7 +45,11 @@ function firmar(payload) {
 function verificarFirma(token) {
     try {
         const decoded = Buffer.from(token, 'base64').toString('utf8');
-        const [payload, hmac] = decoded.split('.');
+        // La firma va después del ÚLTIMO punto: la IP del payload puede
+        // contener puntos (127.0.0.1) cuando el servicio está en la nube.
+        const separador = decoded.lastIndexOf('.');
+        const payload = separador > 0 ? decoded.slice(0, separador) : '';
+        const hmac = separador > 0 ? decoded.slice(separador + 1) : '';
 
         if (!payload || !hmac) return null;
 
