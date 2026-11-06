@@ -135,11 +135,11 @@ def _enviar_smtp(destino: str, nombre: str, id_pedido: int, pdf: bytes, archivo:
 
     try:
         if puerto == 465:
-            with smtplib.SMTP_SSL(host, puerto, timeout=30, context=ssl.create_default_context()) as servidor:
+            with smtplib.SMTP_SSL(host, puerto, timeout=15, context=ssl.create_default_context()) as servidor:
                 servidor.login(usuario, _var("SMTP_PASSWORD"))
                 servidor.send_message(mensaje)
         else:
-            with smtplib.SMTP(host, puerto, timeout=30) as servidor:
+            with smtplib.SMTP(host, puerto, timeout=15) as servidor:
                 servidor.starttls(context=ssl.create_default_context())
                 servidor.login(usuario, _var("SMTP_PASSWORD"))
                 servidor.send_message(mensaje)
@@ -150,10 +150,11 @@ def _enviar_smtp(destino: str, nombre: str, id_pedido: int, pdf: bytes, archivo:
 def enviar_ticket(destino: str, nombre: str, id_pedido: int, pdf: bytes) -> None:
     archivo = f"CUBEX-ticket-{id_pedido}.pdf"
 
-    if _var("SMTP_USER") and _var("SMTP_PASSWORD"):
+    if _var("BREVO_API_KEY"):
+        # En la nube (Railway bloquea SMTP): API HTTPS de Brevo.
+        _enviar_brevo(destino, nombre, id_pedido, pdf, archivo)
+    elif _var("SMTP_USER") and _var("SMTP_PASSWORD"):
         # Misma cuenta y servidor que el correo de recuperar contraseña.
         _enviar_smtp(destino, nombre, id_pedido, pdf, archivo)
-    elif _var("BREVO_API_KEY"):
-        _enviar_brevo(destino, nombre, id_pedido, pdf, archivo)
     else:
         raise ErrorCorreo("El envío de correos no está configurado.")

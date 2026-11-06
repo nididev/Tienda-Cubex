@@ -10,6 +10,9 @@ const transporter = nodemailer.createTransport({
     host: env.smtp.host,
     port: env.smtp.port,
     secure: env.smtp.port === 465,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
     auth: {
         user: env.smtp.user,
         pass: env.smtp.password,
@@ -17,7 +20,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Verificar conexión SMTP
-transporter.verify()
+if (!process.env.BREVO_API_KEY) transporter.verify()
     .then(() => {
         console.log("✓ Servidor SMTP conectado correctamente");
     })
@@ -32,6 +35,47 @@ transporter.verify()
 // ENVIAR CORREO DE RECUPERACIÓN
 // =============================================
 
+// =============================================
+// ENVÍO: API de Brevo (HTTPS) o SMTP
+// =============================================
+// En Railway los puertos SMTP están bloqueados en el plan de prueba;
+// si existe BREVO_API_KEY el correo se manda por la API HTTPS de Brevo.
+async function enviarCorreo(mensaje: any): Promise<void> {
+    const claveBrevo = process.env.BREVO_API_KEY;
+
+    if (!claveBrevo) {
+        await transporter.sendMail(mensaje);
+        return;
+    }
+
+    const remitente = String(mensaje.from || "");
+    const coincidencia = remitente.match(/^\s*"?([^"<]*)"?\s*<([^>]+)>\s*$/);
+    const sender = coincidencia
+        ? { name: coincidencia[1].trim() || "CUBEX", email: coincidencia[2].trim() }
+        : { name: "CUBEX", email: remitente.trim() };
+
+    const respuesta = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+            "api-key": claveBrevo,
+            "content-type": "application/json",
+            accept: "application/json",
+        },
+        body: JSON.stringify({
+            sender,
+            to: [{ email: mensaje.to }],
+            subject: mensaje.subject,
+            textContent: mensaje.text,
+            htmlContent: mensaje.html,
+        }),
+    });
+
+    if (!respuesta.ok) {
+        const detalle = await respuesta.text().catch(() => "");
+        throw new Error(`Brevo rechazó el envío (${respuesta.status}): ${detalle.slice(0, 300)}`);
+    }
+}
+
 export async function sendPasswordResetEmail(
     email: string,
     name: string,
@@ -42,7 +86,7 @@ export async function sendPasswordResetEmail(
     const resetUrl =
         `${env.frontendUrl}/reset-password.html?token=${encodeURIComponent(token)}`;
 
-    await transporter.sendMail({
+    await enviarCorreo({
 
         from: env.smtp.from,
         to: email,
