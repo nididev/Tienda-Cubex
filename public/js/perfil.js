@@ -347,6 +347,9 @@
         if (ticket) {
             ticket.disabled = true;
 
+            // La pestaña se abre en el clic para que el navegador no la bloquee.
+            const ventana = CUBEX_PDF.prepararVentana();
+
             try {
                 const respuesta = await fetch(`${API.TICKETS}/api/tickets/${ticket.dataset.ticket}`);
 
@@ -356,15 +359,9 @@
                 }
 
                 const archivo = await respuesta.blob();
-                const url = URL.createObjectURL(archivo);
-                const enlace = document.createElement("a");
-                enlace.href = url;
-                enlace.download = `CUBEX-ticket-${ticket.dataset.ticket}.pdf`;
-                document.body.appendChild(enlace);
-                enlace.click();
-                enlace.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                CUBEX_PDF.mostrar(archivo, `CUBEX-ticket-${ticket.dataset.ticket}.pdf`, ventana);
             } catch (error) {
+                CUBEX_PDF.cerrar(ventana);
                 C.aviso(
                     error.message === "Failed to fetch"
                         ? "El servicio de tickets no está disponible."

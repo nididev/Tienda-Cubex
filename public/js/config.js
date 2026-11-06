@@ -54,6 +54,60 @@
         "Correos de México": "https://www.correosdemexico.gob.mx/SSLServicios/SeguimientoEnvio/Seguimiento.aspx"
     };
 
+    /* -----------------------------------------------------------------
+       Mostrar un PDF (ticket) generado por los servicios.
+       Se abre en una pestaña nueva con el visor de PDF del navegador,
+       desde donde se puede guardar o imprimir. Abrir la pestaña en el
+       momento del clic evita que el navegador la bloquee, y no depende
+       de la descarga automática (que Chrome puede bloquear).
+       ----------------------------------------------------------------- */
+    window.CUBEX_PDF = Object.freeze({
+        prepararVentana() {
+            try {
+                const ventana = window.open("", "_blank");
+                if (ventana) {
+                    ventana.document.title = "Ticket CUBEX";
+                    ventana.document.body.innerHTML =
+                        '<p style="font-family:Arial,sans-serif;padding:24px">Generando ticket...</p>';
+                }
+                return ventana;
+            } catch {
+                return null;
+            }
+        },
+
+        mostrar(blob, nombre, ventana) {
+            const archivo = blob.type === "application/pdf"
+                ? blob
+                : new Blob([blob], { type: "application/pdf" });
+
+            const url = URL.createObjectURL(archivo);
+
+            if (ventana && !ventana.closed) {
+                ventana.location.href = url;
+            } else {
+                // Si el navegador bloqueó la pestaña, se descarga el archivo.
+                const enlace = document.createElement("a");
+                enlace.href = url;
+                enlace.download = nombre;
+                document.body.appendChild(enlace);
+                enlace.click();
+                enlace.remove();
+            }
+
+            // Se libera después, cuando el visor ya cargó el archivo.
+            setTimeout(() => URL.revokeObjectURL(url), 10 * 60 * 1000);
+        },
+
+        cerrar(ventana) {
+            try {
+                if (ventana && !ventana.closed) ventana.close();
+            } catch {
+                // Sin acción.
+            }
+        }
+    });
+
     window.CUBEX_CONFIG = Object.freeze({
         API: Object.freeze(API),
         RASTREO_PAQUETERIAS: Object.freeze(RASTREO_PAQUETERIAS),

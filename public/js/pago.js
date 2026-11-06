@@ -492,7 +492,7 @@ async function enviarTicketPorCorreo(idPedido) {
    DESCARGAR TICKET
    ========================================================= */
 
-async function descargarTicket(idPedido) {
+async function descargarTicket(idPedido, ventana) {
     const respuesta = await fetch(
         `${API_TICKETS}/api/tickets/${idPedido}`,
         {
@@ -511,31 +511,23 @@ async function descargarTicket(idPedido) {
 
     const archivo = await respuesta.blob();
 
-    const url = URL.createObjectURL(archivo);
-
-    const enlace = document.createElement("a");
-
-    enlace.href = url;
-    enlace.download = `CUBEX-ticket-${idPedido}.pdf`;
-
-    document.body.appendChild(enlace);
-
-    enlace.click();
-    enlace.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    CUBEX_PDF.mostrar(archivo, `CUBEX-ticket-${idPedido}.pdf`, ventana);
 }
 
 btnDescargarTicket.addEventListener("click", async () => {
+    // La pestaña se abre en el clic para que el navegador no la bloquee.
+    const ventana = CUBEX_PDF.prepararVentana();
+
     try {
         btnDescargarTicket.disabled = true;
 
         btnDescargarTicket.innerHTML =
             '<i class="fa-solid fa-spinner fa-spin"></i> Generando ticket...';
 
-        await descargarTicket(pedidoPagadoId);
+        await descargarTicket(pedidoPagadoId, ventana);
 
     } catch (error) {
+        CUBEX_PDF.cerrar(ventana);
         mostrarMensaje(error.message, "error");
 
     } finally {
