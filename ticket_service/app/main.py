@@ -9,10 +9,11 @@ from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from xhtml2pdf import pisa
 
 from app.config import settings
+from app.correo import ErrorCorreo, correo_configurado, enviar_ticket
 from app.database import obtener_pedido_completo
+from app.pdf_ticket import generar_pdf
 from app.seguridad import ROLES_PERSONAL, ErrorSeguridad, extraer_token, verificar_token
 
 
@@ -28,7 +29,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["GET", "OPTIONS"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"]
 )
 
@@ -51,10 +52,10 @@ def salud():
     }
 
 
-@app.get("/api/tickets/{id_pedido}")
-def generar_ticket(id_pedido: int, authorization: str | None = Header(default=None)):
+def preparar_ticket(id_pedido: int, authorization: str | None):
+    """Valida al usuario y el pedido, y genera el PDF del ticket."""
 
-    # Solo el dueño del pedido o el personal pueden descargar el ticket
+    # Solo el dueño del pedido o el personal pueden obtener el ticket
     # (contiene nombre y correo del cliente).
     try:
         usuario = verificar_token(extraer_token(authorization))
@@ -69,7 +70,6 @@ def generar_ticket(id_pedido: int, authorization: str | None = Header(default=No
         )
 
     # Consultar pedido y productos
-        # Consultar pedido y productos
     try:
         pedido, detalles = obtener_pedido_completo(id_pedido)
 
@@ -86,6 +86,7 @@ def generar_ticket(id_pedido: int, authorization: str | None = Header(default=No
             status_code=500,
             detail=f"Error al consultar el pedido: {str(error)}"
         )
+
     # Validar existencia
     if not pedido:
         raise HTTPException(
@@ -133,10 +134,7 @@ def generar_ticket(id_pedido: int, authorization: str | None = Header(default=No
         or f"Cliente #{pedido.get('id_cliente')}"
     )
 
-    cliente_correo = (
-        pedido.get("cliente_correo")
-        or "No disponible"
-    )
+    cliente_correo = pedido.get("cliente_correo") or ""
 
     # Preparar productos y calcular total
     items = []
@@ -156,55 +154,84 @@ def generar_ticket(id_pedido: int, authorization: str | None = Header(default=No
             "importe": float(importe)
         })
 
-    # Cargar plantilla
+    datos = {
+        "folio": folio,
+        "fecha": fecha_texto,
+        "pedido_id": id_pedido,
+        "cliente_nombre": cliente_nombre,
+        "cliente_correo": cliente_correo or "No disponible",
+        "items": items,
+        "total": float(total)
+    }
+
+    # Preparar la plantilla (si falla, se usa el diseño de respaldo)
     try:
-        template = env.get_template("ticket_template.html")
-
-        html = template.render(
-            folio=folio,
-            fecha=fecha_texto,
-            pedido_id=id_pedido,
-            cliente_nombre=cliente_nombre,
-            cliente_correo=cliente_correo,
-            items=items,
-            total=float(total)
-        )
-
+        html = env.get_template("ticket_template.html").render(**datos)
     except Exception as error:
         print(f"Error preparando plantilla: {error}")
-        raise HTTPException(
-            status_code=500,
-            detail="No fue posible preparar la plantilla del ticket."
-        )
+        html = ""
 
     # Generar PDF
-    buffer = io.BytesIO()
-
     try:
-        resultado = pisa.CreatePDF(
-            io.StringIO(html),
-            dest=buffer,
-            encoding="utf-8"
-        )
+        pdf = generar_pdf(html, datos)
+    except Exception:
+        import traceback
 
-        if resultado.err:
-            raise Exception("Error al convertir HTML a PDF.")
+        print("[tickets] Error generando el PDF:")
+        traceback.print_exc()
 
-    except Exception as error:
-        print(f"Error generando PDF: {error}")
         raise HTTPException(
             status_code=500,
             detail="No se pudo generar el PDF del ticket."
         )
 
-    # Preparar descarga
-    buffer.seek(0)
+    return pdf, cliente_nombre, cliente_correo
+
+
+@app.get("/api/tickets/{id_pedido}")
+def generar_ticket(id_pedido: int, authorization: str | None = Header(default=None)):
+    pdf, _, _ = preparar_ticket(id_pedido, authorization)
 
     return StreamingResponse(
-        buffer,
+        io.BytesIO(pdf),
         media_type="application/pdf",
         headers={
             "Content-Disposition":
                 f'attachment; filename="ticket-CUBEX-{id_pedido}.pdf"'
         }
     )
+
+
+@app.post("/api/tickets/{id_pedido}/enviar")
+def enviar_ticket_por_correo(id_pedido: int, authorization: str | None = Header(default=None)):
+    """Envía el ticket PDF al correo registrado del cliente del pedido."""
+
+    if not correo_configurado():
+        raise HTTPException(
+            status_code=503,
+            detail="El envío de correos no está configurado en el servidor."
+        )
+
+    pdf, cliente_nombre, cliente_correo = preparar_ticket(id_pedido, authorization)
+
+    if not cliente_correo:
+        raise HTTPException(
+            status_code=409,
+            detail="El cliente no tiene un correo electrónico registrado."
+        )
+
+    try:
+        enviar_ticket(cliente_correo, cliente_nombre, id_pedido, pdf)
+    except ErrorCorreo as error:
+        print(f"[tickets] Error enviando el correo del pedido {id_pedido}: {error}", flush=True)
+        raise HTTPException(
+            status_code=502,
+            detail="No fue posible enviar el ticket por correo."
+        )
+
+    return {
+        "exitoso": True,
+        "mensaje": "Ticket enviado por correo.",
+        "pedido": id_pedido,
+        "correo": cliente_correo
+    }
